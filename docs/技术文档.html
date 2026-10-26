@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>灵犀洞察 · 技术文档</title><style>
+@page { size: A4; margin: 17mm 15mm 16mm 15mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "SimSun", sans-serif;
+  font-size: 10.5pt; line-height: 1.68; color: #1a1a1a; margin: 0;
+}
+h1 { font-size: 19pt; color: #0f172a; border-bottom: 2.4px solid #2563eb;
+     padding-bottom: 7px; margin: 0 0 16px 0; }
+h2 { font-size: 14pt; color: #0f172a; margin: 22px 0 11px 0;
+     padding-left: 10px; border-left: 4px solid #2563eb; background: #f6f8fc;
+     padding-top: 5px; padding-bottom: 5px; }
+h3 { font-size: 12pt; color: #1e3a8a; margin: 16px 0 8px 0; }
+h4 { font-size: 11pt; color: #334155; margin: 13px 0 7px 0; }
+p  { margin: 7px 0; }
+ul, ol { margin: 7px 0 7px 0; padding-left: 22px; }
+li { margin: 3px 0; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0 14px 0;
+        font-size: 9.2pt; page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+th { background: #eef2f9; color: #0f172a; font-weight: 600;
+     border: 1px solid #c8d2e0; padding: 5px 7px; text-align: left; }
+td { border: 1px solid #dbe2ec; padding: 5px 7px; vertical-align: top; }
+tbody tr:nth-child(even) { background: #fafcff; }
+blockquote { margin: 10px 0; padding: 8px 12px; background: #f8fafc;
+             border-left: 3px solid #94a3b8; color: #475569; font-size: 9.6pt; }
+code { font-family: Consolas, "Courier New", monospace; font-size: 9pt;
+       background: #f1f5f9; padding: 1px 4px; border-radius: 3px; }
+pre { background: #0f172a; color: #e2e8f0; padding: 11px 13px; border-radius: 6px;
+      overflow: hidden; font-size: 8.8pt; line-height: 1.5; page-break-inside: avoid; }
+pre code { background: none; color: inherit; padding: 0; }
+hr { border: none; border-top: 1px solid #e2e8f0; margin: 18px 0; }
+
+/* 封面 */
+.cover { text-align: center; padding: 70px 0 40px 0; page-break-after: always; }
+.cover-badge { display: inline-block; background: #2563eb; color: #fff;
+               font-size: 9.5pt; padding: 5px 15px; border-radius: 20px; margin-bottom: 26px; }
+.cover-title { font-size: 27pt; color: #0f172a; border: none; margin: 0 0 12px 0;
+               padding: 0; letter-spacing: 1px; }
+.cover-sub { font-size: 12.5pt; color: #475569; margin-bottom: 42px; }
+.cover-meta { width: 76%; margin: 0 auto; font-size: 10pt; }
+.cover-meta td { border: none; border-bottom: 1px solid #e2e8f0; padding: 8px 10px; }
+.cover-meta td:first-child { width: 26%; color: #64748b; text-align: right; font-weight: 600; }
+
+h2 { page-break-after: avoid; }
+</style></head>
+<body>
+<div class="cover">
+  <div class="cover-badge">全国高校 AI Web 开发挑战赛 · A 组</div>
+  <h1 class="cover-title">灵犀洞察 · LingXi Insight</h1>
+  <div class="cover-sub">AI 原生对话式数据分析平台 —— 技术文档</div>
+  <table class="cover-meta">
+    <tr><td>参赛赛事</td><td>2026 第九届传智杯全国大学生数智创新与 AI 应用大赛</td></tr>
+    <tr><td>参赛赛道</td><td>AI WEB 网页开发挑战赛（A 组）</td></tr>
+    <tr><td>团队名称</td><td>灵犀洞察队</td></tr>
+    <tr><td>文档版本</td><td>v1.0</td></tr>
+    <tr><td>技术栈</td><td>Next.js 14 · React 18 · TypeScript · Tailwind · Zustand</td></tr>
+  </table>
+</div>
+<h1>灵犀洞察 —— AI 原生对话式数据分析平台 · 技术文档</h1>
+<blockquote>
+<p>全国高校 AI Web 开发挑战赛 · 技术文档（PDF 内容稿）<br />
+对应命题方向：AI 数据分析与可视化（兼融 AI Agent、RAG、多模态交互）</p>
+</blockquote>
+<hr />
+<h2>1 项目概述</h2>
+<h3>1.1 背景与问题定义</h3>
+<p>数据分析是高校学生、中小企业运营人员与基层公务人员的常见需求，但传统路径存在明显门槛：<br />
+需要掌握 SQL 或 BI 工具、理解数据表结构、手工配置图表。与此同时，大语言模型与<br />
+Agent 技术在 2026 年已趋成熟，「用自然语言直接与数据对话」成为可能。</p>
+<p><strong>本作品回答一个问题：能否让一个不懂技术的用户，在三句话内完成一次专业的数据分析？</strong></p>
+<h3>1.2 产品定位</h3>
+<p>灵犀洞察是一款 AI Native 的对话式数据分析平台。核心特征：</p>
+<ol>
+<li><strong>AI 是核心而非附属</strong>：意图理解、查询构造、图表选型、洞察生成全部由 AI 完成；</li>
+<li><strong>过程透明</strong>：Agent 的每一步规划、工具调用与执行结果对用户可见、可审计；</li>
+<li><strong>结果可信</strong>：所有数字来自服务端真实计算，预测类输出明确标注演示属性。</li>
+</ol>
+<h3>1.3 目标用户</h3>
+<ul>
+<li>高校学生（课程作业、科研数据处理、学情分析）；</li>
+<li>中小企业运营、个体经营者（销售数据快速洞察）；</li>
+<li>需要快速理解数据的教育、公共部门基层人员。</li>
+</ul>
+<hr />
+<h2>2 需求分析</h2>
+<h3>2.1 用户故事</h3>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>场景</th>
+<th>期望</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>学生</td>
+<td>拿到一份课程成绩 CSV</td>
+<td>上传后直接问「哪个学科挂科率最高」</td>
+</tr>
+<tr>
+<td>运营</td>
+<td>每日销售明细</td>
+<td>「近30天销售额趋势」「各品类占比」一句话可得</td>
+</tr>
+<tr>
+<td>管理者</td>
+<td>季度复盘</td>
+<td>一键生成结构化洞察报告并导出</td>
+</tr>
+<tr>
+<td>研究者</td>
+<td>上传文献资料</td>
+<td>就文档内容提问并获得带引用的答案</td>
+</tr>
+</tbody>
+</table>
+<h3>2.2 功能需求</h3>
+<ul>
+<li>FR1 数据接入：内置示例数据 + CSV 上传（自动类型推断）；</li>
+<li>FR2 自然语言查询：覆盖趋势、占比、排名、对比、相关性、异常、预测、报告八类意图；</li>
+<li>FR3 可视化：按数据形态自动推荐图表类型；</li>
+<li>FR4 可解释性：Agent 过程可视化；</li>
+<li>FR5 知识库：文档入库、切片、检索、带引用问答；</li>
+<li>FR6 多模态输入：语音转写；</li>
+<li>FR7 报告导出：Markdown 报告生成与下载；</li>
+<li>FR8 安全可控：输入护栏、生成中断、异常降级。</li>
+</ul>
+<h3>2.3 非功能需求</h3>
+<ul>
+<li>首屏加载 ≤ 200KB（工作台 121KB First Load JS）；</li>
+<li>流式首包延迟 &lt; 1s；</li>
+<li>无后端数据库依赖即可完整运行；</li>
+<li>API Key 零硬编码；</li>
+<li>响应式（桌面三栏 / 移动端抽屉）。</li>
+</ul>
+<hr />
+<h2>3 系统架构设计</h2>
+<h3>3.1 总体架构</h3>
+<p>采用四层架构（详见 README 架构图）：</p>
+<ol>
+<li><strong>用户界面层</strong>：Next.js 14 App Router + React 18 + TypeScript + Tailwind CSS；</li>
+<li><strong>交互协议层</strong>：SSE 单向流 + 统一 <code>AgentEvent</code> 事件协议；</li>
+<li><strong>AI 引擎层</strong>：ReAct 编排 + 双通道（本地演示引擎 / OpenAI 兼容通道）+ 共用工具层；</li>
+<li><strong>数据层</strong>：内存数据集 + TF-IDF 倒排索引 + 统计算法。</li>
+</ol>
+<h3>3.2 关键设计决策</h3>
+<table>
+<thead>
+<tr>
+<th>决策</th>
+<th>选项</th>
+<th>选择理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>框架</td>
+<td>Next.js 14 vs Vite SPA</td>
+<td>竞赛推荐首选；需要 API Routes 承载 AI 服务端逻辑与 SSE</td>
+</tr>
+<tr>
+<td>流式协议</td>
+<td>自研 SSE vs Vercel AI SDK</td>
+<td>自研事件协议结构更清晰、可完整展示「思考过程」；无 SDK 版本锁定，协议即文档</td>
+</tr>
+<tr>
+<td>图表</td>
+<td>自研 SVG vs Recharts</td>
+<td>零依赖、包体小；可精确实现预测虚线、异常标注等竞赛特色视觉</td>
+</tr>
+<tr>
+<td>AI 通道</td>
+<td>仅真实 API vs 双通道</td>
+<td>保证无 Key 环境下完整可评审；配置 Key 后无缝升级生产级</td>
+</tr>
+<tr>
+<td>状态管理</td>
+<td>Zustand vs Redux</td>
+<td>轻量、无样板代码、TS 友好</td>
+</tr>
+</tbody>
+</table>
+<h3>3.3 数据模型</h3>
+<ul>
+<li><code>DatasetPayload</code>：columns（名称 + 类型）+ rows（ Record<string, string|number> ）；</li>
+<li><code>AgentEvent</code>：10 种事件的判别式联合（详见 <code>lib/types.ts</code>）；</li>
+<li><code>ChatMessage</code>：内容块列表（text / metrics / chart / table / citations / report / error）。</li>
+</ul>
+<hr />
+<h2>4 AI 技术方案</h2>
+<h3>4.0 AI 技术选型、集成方式与优化策略</h3>
+<h4>4.0.1 选型理由</h4>
+<table>
+<thead>
+<tr>
+<th>技术环节</th>
+<th>本作品选型</th>
+<th>选型理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLM 接入协议</td>
+<td>OpenAI Chat Completions 兼容协议（含 Function Calling）</td>
+<td>事实工业标准；DeepSeek / 智谱 GLM / 通义千问 / Kimi 均提供兼容端点，一套代码可换多家模型，避免厂商锁定</td>
+</tr>
+<tr>
+<td>实际模型</td>
+<td><code>deepseek-chat</code>（已接入实测），可替换为 gpt-4o-mini / glm-4-plus / qwen-plus</td>
+<td>中文指令遵循能力强、Function Calling 稳定、成本低；且实测其 API 支持 CORS 并允许 <code>Origin: null</code>，使单文件版可浏览器直连</td>
+</tr>
+<tr>
+<td>编排范式</td>
+<td>ReAct（规划 → 工具调用 → 观察 → 生成）</td>
+<td>相较一次性问答，可分多步取数并交叉验证；每一步天然可事件化，是实现「AI 过程透明」这一核心设计目标的必要前提</td>
+</tr>
+<tr>
+<td>检索方案</td>
+<td>自研 TF-IDF + 余弦相似度</td>
+<td>零外部依赖、可离线运行、毫秒级响应；接口与 Embedding 检索对齐，后续可平替向量数据库而无需改动上层</td>
+</tr>
+<tr>
+<td>流式协议</td>
+<td>自研 SSE + 统一 <code>AgentEvent</code></td>
+<td>相比 SDK 黑盒封装，自主协议结构清晰、可扩展，「协议即文档」，是过程可视化的通信基础</td>
+</tr>
+<tr>
+<td>可视化</td>
+<td>自研纯 SVG 图表引擎</td>
+<td>零图表库依赖、包体零增量；可精确控制预测虚线、异常标注等竞赛特色视觉</td>
+</tr>
+</tbody>
+</table>
+<h4>4.0.2 集成方式</h4>
+<ol>
+<li><strong>工具层统一</strong>：本地演示引擎与真实 LLM 通道共用 <code>lib/ai/tools.ts</code> 中同一份工具定义与实现<br />
+   （<code>TOOL_DEFS</code> / <code>executeTool</code>），两条通道产出结构完全一致，前端无需任何分支处理。</li>
+<li><strong>服务端代理</strong>：LLM 调用发生在 Next.js API Route 内，API Key 仅通过环境变量注入，<br />
+   浏览器全程不可见；<code>GET /api/config</code> 只回传模型名，不回传密钥。</li>
+<li><strong>事件归一化</strong>：LLM 的 <code>delta</code> / <code>tool_calls</code> / <code>usage</code> 统一转换为 <code>AgentEvent</code> 后下发，<br />
+   前端渲染管线对本地引擎与真实模型无差别。</li>
+<li><strong>浏览器直连（单文件版）</strong>：实测 DeepSeek API 支持 CORS 且允许 <code>Origin: null</code>，<br />
+   密钥仅存于 localStorage，HTML 文件本身零密钥，可安全传阅。</li>
+<li><strong>通道热切换</strong>：应用内提供「自动 / 真实模型 / 本地演示」三档，路由按 <code>channel</code> 决策，<br />
+   未配置 Key 时给出配置指引并自动回退本地引擎。</li>
+</ol>
+<h4>4.0.3 优化策略</h4>
+<table>
+<thead>
+<tr>
+<th>优化点</th>
+<th>待解决问题</th>
+<th>采取策略</th>
+<th>实测效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Token 成本</td>
+<td>原始数据全量入 Prompt 成本高</td>
+<td>仅注入 Schema（字段名 + 类型 + 少量样例）与聚合结果，原始行不进模型</td>
+<td>单次对话 token 量降至约 1.8k</td>
+</tr>
+<tr>
+<td>事实准确性</td>
+<td>LLM 易编造数字</td>
+<td>所有数值由服务端 <code>executeTool</code> 真实计算后回注，Prompt 明令禁止编造</td>
+<td>统计数字 100% 真实可复现</td>
+</tr>
+<tr>
+<td>图表缺失</td>
+<td>LLM 可能只调 <code>query_data</code> 而不调 <code>recommend_chart</code></td>
+<td>工具循环内自动补全图表（<code>chartEmitted</code> 去重）</td>
+<td>图表覆盖率 100%</td>
+</tr>
+<tr>
+<td>用量统计</td>
+<td>按字符估算偏差大</td>
+<td><code>stream_options.include_usage</code> 读取 API 精确值</td>
+<td>usage 精确（如 1787/386、1949/556）</td>
+</tr>
+<tr>
+<td>首包延迟</td>
+<td>等待完整响应体验差</td>
+<td>SSE 逐事件推送，思考步骤先行渲染</td>
+<td>流式首包 &lt; 1s</td>
+</tr>
+<tr>
+<td>服务可用性</td>
+<td>API 不可用导致演示中断</td>
+<td>通道异常自动降级本地引擎并明确告知用户</td>
+<td>演示 0 中断</td>
+</tr>
+<tr>
+<td>循环失控</td>
+<td>工具调用可能死循环</td>
+<td>工具调用轮次上限 6</td>
+<td>成本可控</td>
+</tr>
+<tr>
+<td>检索噪声</td>
+<td>低相关度文档误导回答</td>
+<td>相关度阈值 0.08，未命中即回退数据分析通道</td>
+<td>引用可信可核查</td>
+</tr>
+<tr>
+<td>预测误导</td>
+<td>用户可能误信预测结果</td>
+<td>所有预测输出固定标注「演示性预测，仅供参考」</td>
+<td>责任边界清晰</td>
+</tr>
+</tbody>
+</table>
+<h3>4.1 意图理解（规则 + 同义词映射）</h3>
+<p><code>classifyIntent</code> 基于优先级关键词匹配识别 10 类意图；<br />
+<code>parseQuery</code> 将问题解析为结构化 <code>QuerySpec</code>：指标（列名 + 同义词）、维度、<br />
+聚合方式、时间范围（最近 N 天 / 本周 / 上月 / N 年）、时间粒度（日/周/月）、<br />
+Top N、维度值过滤（含前缀模糊匹配）。解析失败时进入「澄清引导」而非猜测。</p>
+<h3>4.2 数据查询引擎</h3>
+<p><code>queryData</code> 执行：行过滤（时间范围 + 维度值）→ 分组（时间分桶 / 类别）→<br />
+聚合（sum/avg/max/min/count）→ 排序 → Top N 截断，输出图表序列、表格、<br />
+指标卡与统计量（总计、均值、峰谷、环比变化）。上一周期对比通过日期平移窗口真实计算。</p>
+<h3>4.3 Agent 编排（ReAct）</h3>
+<p>规划 → 工具调用 → 观察 → 生成。深度思考模式追加「数据质量检查」与「交叉验证」步骤；<br />
+异常/预测/相关性意图追加对应专用工具。全过程以事件流输出，前端实时渲染。</p>
+<h3>4.4 工具集（Function Calling）</h3>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>算法</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>query_data</td>
+<td>分组聚合</td>
+<td>序列 + 表格 + 指标卡</td>
+</tr>
+<tr>
+<td>recommend_chart</td>
+<td>数据形态 → 图表类型</td>
+<td>ChartSpec</td>
+</tr>
+<tr>
+<td>detect_anomaly</td>
+<td>Z-Score（阈值 1.8）</td>
+<td>异常点 + 标注序列</td>
+</tr>
+<tr>
+<td>forecast</td>
+<td>最小二乘线性回归</td>
+<td>预测虚线序列</td>
+</tr>
+<tr>
+<td>analyze_correlation</td>
+<td>Pearson r</td>
+<td>散点 + 相关系数</td>
+</tr>
+<tr>
+<td>search_knowledge</td>
+<td>TF-IDF 余弦</td>
+<td>引用列表</td>
+</tr>
+</tbody>
+</table>
+<h3>4.5 RAG 知识库</h3>
+<p>切片（160/40 滑动窗口，标点优先）→ 分词（中文二元组 + 英文词）→ TF-IDF →<br />
+余弦相似度 Top-3 → 抽取最相关句子作为引用。相关度阈值 0.08，未命中即回退数据分析通道。<br />
+接口与 Embedding 检索对齐，可平替向量数据库。</p>
+<h3>4.6 真实模型接入</h3>
+<p>配置 <code>OPENAI_API_KEY</code> 后切换至 OpenAI 兼容通道：系统提示词注入数据 Schema 与工具规范，<br />
+流式接收 LLM 输出，累积 tool_calls 后本地执行并回注，循环直至无工具调用（上限 6 轮）。<br />
+异常时自动降级本地引擎，保证评审演示不中断。</p>
+<h3>4.7 Prompt 设计要点</h3>
+<p>角色约束（数据分析助手）、Schema 注入（字段名与类型）、工具使用规范<br />
+（指标维度必须真实存在、口语映射、禁止编造数字）、输出结构（结论→依据→建议）、<br />
+预测免责声明、安全边界。</p>
+<hr />
+<h2>5 核心功能实现</h2>
+<h3>5.1 流式渲染管线</h3>
+<p><code>fetch</code> → <code>ReadableStream</code> reader → 按 <code>\n\n</code> 切分 SSE 帧 → JSON 解析 → 事件分发：<br />
+<code>text</code> 增量追加至末尾文本块（配合打字光标），<code>tool_result</code> 推送图表/指标/表格内容块，<br />
+<code>tool_call/result</code> 更新追踪面板（含真实耗时）。<code>AbortController</code> 支持随时中断。</p>
+<h3>5.2 纯 SVG 图表引擎</h3>
+<ul>
+<li>折线：<code>pathLength=1</code> + dashoffset 实现描线入场动画；面积渐变；预测序列虚线；<br />
+  异常点脉冲圆环；<code>&lt;title&gt;</code> 原生 tooltip；</li>
+<li>环形：极坐标弧路径 + 中心汇总值 + 图例百分比；</li>
+<li>条形/水平条形：<code>transform-box: fill-box</code> 实现生长动画；</li>
+<li>散点：双轴 nice-scale 刻度；</li>
+<li>「好看」的刻度算法：基于数量级的 step 取整（1/2/5×10^n）。</li>
+</ul>
+<h3>5.3 CSV 上传与类型推断</h3>
+<p>PapaParse 解析 → 每列抽样 50 值 → 全数值 / 全日期 / 文本三态推断 →<br />
+值强转（数字 parseFloat、日期归一化 YYYY-MM-DD）→ 上限 5000 行防护。</p>
+<h3>5.4 报告生成</h3>
+<p><code>composeReport</code> 汇总：数据概览（行列数、时间范围、维度基数、指标统计表）、<br />
+核心发现（整体表现、峰谷、结构集中度、指标相关性）、月度趋势、行动建议、<br />
+会话问题回顾；以 Markdown 流式输出，前端轻量渲染并支持下载。</p>
+<h3>5.5 响应式与可访问性</h3>
+<p>桌面三栏（数据源 288px / 对话自适应 / 追踪 320px）；移动端侧栏抽屉、右栏 Tab 隐藏；<br />
+<code>prefers-reduced-motion</code> 降级所有动画；语义化标题与 aria-label。</p>
+<hr />
+<h2>6 测试与部署</h2>
+<h3>6.1 测试</h3>
+<ul>
+<li><strong>类型安全</strong>：<code>tsc --noEmit</code> strict 模式零错误；</li>
+<li><strong>端到端测试</strong>（<code>scripts/e2e-test.mjs</code>，13 项断言全部通过）：<br />
+  趋势/占比/排名/对比/预测/异常/相关性/报告/问候/护栏十条对话路径 +<br />
+  RAG 引用 + <code>/api/rag</code> 检索接口 + <code>/api/report</code> 报告接口；</li>
+<li><strong>构建验证</strong>：<code>next build</code> 通过，6 路由，工作台 First Load JS 121KB；</li>
+<li><strong>真实计算校验</strong>：所有断言中的数字均由查询引擎现场计算，测试数据为种子生成可复现。</li>
+</ul>
+<h3>6.2 部署</h3>
+<p>标准 Next.js 应用，支持 Vercel / Node 服务器 / Docker 部署：</p>
+<pre class="codehilite"><code class="language-bash">npm install &amp;&amp; npm run build &amp;&amp; npm start   # 默认 3000 端口
+</code></pre>
+
+<p>无外部服务依赖（数据库/对象存储均不需要）；SSE 已禁用代理缓冲<br />
+（<code>X-Accel-Buffering: no</code>）。</p>
+<hr />
+<h2>7 创新点说明</h2>
+<h3>7.1 技术创新点</h3>
+<ol>
+<li><strong>统一事件协议的双通道 AI 架构</strong>：本地确定性引擎与真实 LLM 通道共用同一工具层与同一<br />
+<code>AgentEvent</code> 协议，通道可热切换、异常自动降级，实现「零 Key 可评审、有 Key 即生产级」，<br />
+   在同一套前端代码下同时满足评审可复现性与生产级智能。</li>
+<li><strong>AI 思考过程全透明（ReAct 可视化）</strong>：规划步骤、工具调用参数、执行耗时、观察摘要全程<br />
+   实时呈现并附带 token 用量，将黑盒推理转变为可审计、可教学的透明过程。</li>
+<li><strong>自研纯 SVG 图表引擎</strong>：零图表库依赖，精确实现预测虚线、异常点脉冲标注、基于数量级的<br />
+   nice-scale 刻度算法、描线/生长入场动画与原生 tooltip，可视化能力完全自主可控。</li>
+<li><strong>Schema 注入 + 服务端真算的防幻觉链路</strong>：模型只见 Schema 不见原始行，所有数值由服务端<br />
+   计算后回注，从架构层面而非提示词层面消除数值幻觉。</li>
+<li><strong>浏览器端完整 Function Calling 工具循环</strong>：单文件版在浏览器内实现 SSE 流式解析、<br />
+<code>tool_calls</code> 累积、工具本地执行与图表补全，无服务端亦可跑通 Agent 全链路。</li>
+</ol>
+<h3>7.2 应用创新点</h3>
+<ol>
+<li><strong>三句话完成一次专业数据分析</strong>：面向不懂 SQL 与 BI 工具的用户，自然语言直达<br />
+   「图表 + 指标卡 + 解读 + 报告」，显著降低数据分析门槛。</li>
+<li><strong>带可溯源引用的知识库问答</strong>：文档入库后回答附引用片段与相关度评分，结论可核查、<br />
+   可回溯，避免无依据生成。</li>
+<li><strong>零安装单文件交付形态</strong>：约 165KB 的单个 HTML，双击即运行、可离线、可传阅、<br />
+   可直接用于课堂教学分发，交付与评审成本极低。</li>
+<li><strong>可控的多模态交互体验</strong>：语音输入、一键中断生成、报告一键导出、输入安全护栏与<br />
+   降级提示，覆盖真实工作场景中的可控性与可靠性需求。</li>
+</ol>
+<hr />
+<h2>8 总结与展望</h2>
+<h3>8.1 总结</h3>
+<p>本作品以「AI 过程透明化」为核心设计理念，构建了完整的 AI Native 数据分析应用：<br />
+统一事件协议实现前后端解耦，双通道 AI 引擎兼顾可评审性与生产级能力，<br />
+自研 SVG 图表引擎实现零依赖的可视化，RAG 与安全护栏完善了 AI 应用的可靠性。<br />
+13 项端到端测试全部通过，全部统计数字真实可复现。</p>
+<h3>8.2 不足</h3>
+<ul>
+<li>本地引擎的解读文本为模板化合成，个性化程度依赖真实模型；</li>
+<li>预测为线性外推，未建模季节性；</li>
+<li>数据集未持久化，刷新后恢复初始状态。</li>
+</ul>
+<h3>8.3 展望</h3>
+<p>接入向量数据库实现语义级 RAG；引入季节性预测模型；扩展多 Agent 协作<br />
+（分析/图表/报告 Agent）；增加数据持久化与团队协作看板。</p>
+<hr />
+<p><em>本文档由参赛团队编写，对应仓库 <code>lingxi-insight/</code>，可通过 README 中的演示脚本逐项复核。</em></p></body></html>
