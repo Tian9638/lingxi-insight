@@ -29,3 +29,7 @@ next-env.d.ts
 
 # 嵌套解压副本（曾误将发布 ZIP 解压进项目自身，勿入库）
 lingxi-insight/
+
+# 单文件版构建产物：npm run build:standalone 会在构建期注入 API 密钥（混淆存储，非明文），
+# 故该产物禁止入库；源码模板 standalone-template.html 只含占位符，可安全公开。
+/standalone.html
