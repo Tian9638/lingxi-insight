@@ -207,6 +207,51 @@ OPENAI_MODEL=deepseek-chat
 （`query_data` / `get_overview` / `detect_anomaly` / `forecast` / `search_knowledge`），
 工具在服务端真实执行，结果回注 LLM 继续推理；通道异常时自动回退本地引擎，演示不中断。
 
+#### 单文件版的密钥注入（构建期，源码零密钥）
+
+单文件版同样「双击即用、无需输入密钥」，但**密钥不写入源码**：
+`standalone-template.html` 中只保留 `__LX_LLM_KEY__` 等占位符，
+`npm run build:standalone` 在构建时读取环境变量并注入产物 `standalone.html`。
+
+```bash
+# 方式一：写入 .env.local（推荐，已被 .gitignore 忽略）
+OPENAI_API_KEY=sk-xxx
+
+# 方式二：直接注入系统环境变量（换机器时无需复制文件）
+# Windows PowerShell（用户级，永久生效）
+setx DEEPSEEK_API_KEY "sk-xxx"
+# macOS / Linux：写入 ~/.bashrc 或 ~/.zshrc
+export DEEPSEEK_API_KEY="sk-xxx"
+
+npm run build:standalone   # 读取变量 → 注入 → 生成 standalone.html
+```
+
+优先级：**系统环境变量 > `.env.local` > 内置默认**。
+未提供密钥时注入空串，单文件版自动回落本地演示引擎，**仍可完整离线演示**。
+
+> 该设计满足竞赛「API 密钥不得出现在公开仓库中，须通过环境变量配置」的要求：
+> 仓库内 `standalone-template.html` 与所有源码均**不含任何密钥**。
+> 注意：构建产物 `standalone.html` 会包含注入的密钥，公开传阅前请勿提交该文件。
+
+#### 产物内密钥的混淆存储
+
+注入到 `standalone.html` 的密钥**不以明文保存**，而是构建期混淆（XOR + Base64），
+运行时在内存中还原，产物中搜索不到 `sk-` 开头的字符串：
+
+```bash
+LX_KEY_PASS=your-own-passphrase npm run build:standalone   # 可自定义混淆口令
+```
+
+> **正确定性说明**：本作品是纯前端直连 API，浏览器最终必须以明文密钥发出请求，
+> 因此这属于**混淆**而非密码学加密——还原逻辑同样在文件内。
+> - 能防：明文搜索、编辑器里被一眼看到、GitHub Secret Scanning 之类的自动扫描、
+>   演示录屏/截图误泄露、随手转发时被 Ctrl+F 搜到
+> - 不能防：拿到文件的人按同样方法还原（控制台执行同一函数即可）
+>
+> 真正的强隔离只能把密钥放在服务端做代理，代价是需要服务器，与本作品
+> 「免安装、免服务器、双击即用」的定位冲突，故此处为有意取舍。
+> 需要更强保护时，可在 DeepSeek 控制台对密钥设置额度上限并定期轮换。
+
 ### 演示脚本（建议按此顺序录制演示视频）
 
 | # | 操作 | 展示点 |

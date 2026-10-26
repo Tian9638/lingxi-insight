@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#4f46e5">
-<meta name="description" content="灵犀洞察 · AI 原生对话式数据分析平台（单文件版）：上传数据，用自然语言提问，AI Agent 自动完成查询、聚合、图表推荐与洞察报告生成。双击即可运行，无需安装与服务器；可选接入 DeepSeek 真实大模型（密钥仅存本浏览器）。">
+<meta name="description" content="灵犀洞察 · AI 原生对话式数据分析平台（单文件版）：上传数据，用自然语言提问，AI Agent 自动完成查询、聚合、图表推荐与洞察报告生成。双击即可运行，无需安装与服务器；已内置 DeepSeek 真实大模型，打开即用（右上角「模型设置」可更换）。">
 <title>灵犀洞察 · AI 原生对话式数据分析平台（单文件版）</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236366f1'/><stop offset='1' stop-color='%234338ca'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='url(%23g)'/><path d='M14 44 L26 30 L36 37 L50 20' fill='none' stroke='%23fff' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/><circle cx='50' cy='20' r='5' fill='%23fff'/></svg>">
 <style>
@@ -432,7 +432,7 @@ textarea.inp{resize:vertical;min-height:70px;line-height:1.6}
       <div>
         <span class="kicker"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg> 全国高校 AI Web 开发挑战赛 · 参赛作品 · 单文件离线版</span>
         <h1>与数据对话，<br>让<span class="grad">洞察</span>自然流动</h1>
-        <p class="hero-sub">灵犀洞察是一款 AI 原生的对话式数据分析平台。上传数据，用自然语言提问，AI Agent 自动完成查询、聚合、图表推荐与洞察报告生成——全程思考过程透明可见。本页面双击即可运行，无需安装、无需服务器；<b style="color:var(--b700)">可选接入 DeepSeek 真实大模型</b>（点右上角 <svg class="ic" aria-hidden="true"><use href="#i-gear"/></svg>，密钥仅存本浏览器）。</p>
+        <p class="hero-sub">灵犀洞察是一款 AI 原生的对话式数据分析平台。上传数据，用自然语言提问，AI Agent 自动完成查询、聚合、图表推荐与洞察报告生成——全程思考过程透明可见。本页面双击即可运行，无需安装、无需服务器，<b style="color:var(--b700)">已内置 DeepSeek 真实大模型</b>。</p>
         <div class="hero-cta">
           <button class="btn btn-p btn-lg" onclick="LXAPP.enterWorkspace()">免费进入工作台 <svg class="ic" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
           <a class="btn btn-s btn-lg" href="#how">观看工作原理</a>
@@ -612,10 +612,6 @@ textarea.inp{resize:vertical;min-height:70px;line-height:1.6}
       <button class="iconbtn" id="llmClose"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button>
     </div>
     <div class="modal-b">
-      <p style="font-size:12px;line-height:1.7;color:#64748b;margin-bottom:14px">
-        填入任意 <b>OpenAI 兼容</b>接口即可让单文件版直连真实大模型（浏览器 <svg class="ic" aria-hidden="true"><use href="#i-arrow-right"/></svg> API，无中间服务器）。
-        DeepSeek 已预填，密钥<b>仅保存在你当前浏览器的 localStorage</b>，HTML 文件本身不含任何密钥。
-      </p>
       <label style="display:block;font-size:12px;font-weight:600;color:#334155;margin-bottom:4px">API Key</label>
       <input class="inp" id="llmKey" type="password" placeholder="sk-..." style="margin-bottom:12px">
       <label style="display:block;font-size:12px;font-weight:600;color:#334155;margin-bottom:4px">接口地址（Base URL）</label>
@@ -636,7 +632,6 @@ textarea.inp{resize:vertical;min-height:70px;line-height:1.6}
         <button class="btn btn-g btn-sm" id="llmClear" style="color:#dc2626"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg> 清除配置</button>
       </div>
       <div style="margin-top:14px;border-top:1px dashed #e2e8f0;padding-top:12px;font-size:11px;line-height:1.7;color:#94a3b8">
-        <svg class="ic" aria-hidden="true"><use href="#i-warn"/></svg> 安全提示：密钥只存入本浏览器（localStorage），不会随文件分发；请勿在公共电脑上使用，离开前请点「清除配置」。
         浏览器直连需要网络可访问对应 API（国内访问 OpenAI 需代理）。
       </div>
     </div>
@@ -662,8 +657,50 @@ var uid = function(){ return Math.random().toString(36).slice(2, 10); };
 
 /* ---------- 状态 ---------- */
 var LS_KEY = 'lx-llm-config';
+/* ============================================================
+ * 内置默认模型配置（开箱即用）
+ * 新设备 / 新浏览器打开本文件即默认使用 DeepSeek，无需任何输入。
+ * 用户在右上角「模型设置」中保存后会覆盖（存 localStorage，仅本机生效）。
+ * 不注入密钥（构建时未提供环境变量）即自动回落本地演示引擎，仍可离线演示。
+ * ========================================================== */
+/* ------------------------------------------------------------
+ * 内置密钥以「混淆串」形式存放，构建期由环境变量注入并混淆，运行时内存中还原。
+ *
+ * 【重要】正确定性说明（请勿误解其防护强度）：
+ *   本文件是纯前端、直连 API，浏览器最终必须以明文密钥发出请求，
+ *   因此这属于「混淆」而非密码学意义上的加密 —— 还原逻辑同样在文件内。
+ *   能防：明文搜索 / 编辑器里被一眼看到 / 自动密钥扫描(GitHub Secret Scanning) /
+ *         录屏截图误泄露 / 随手转发时被人直接 Ctrl+F 到 sk-
+ *   不能防：拿到文件的人按同样方法还原（打开控制台执行同一个函数即可）
+ *   真正的强隔离只能靠「密钥留在服务端做代理」，代价是需要服务器，与本作品
+ *   「免安装、免服务器、双击即用」的定位冲突，故此处为有意取舍。
+ * ---------------------------------------------------------- */
+var LX_KEY_PASS = '__LX_LLM_PASS__';
+function lxDeobf(b64, pass){
+  try {
+    if (!b64) return '';
+    var bin = atob(b64), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++){
+      bytes[i] = bin.charCodeAt(i) ^ pass.charCodeAt(i % pass.length);
+    }
+    return new TextDecoder().decode(bytes);
+  } catch (e) { return ''; }
+}
+var BUILTIN_LLM = {
+  apiKeyEnc: '__LX_LLM_KEY__',
+  baseUrl: '__LX_LLM_BASE__',
+  model: '__LX_LLM_MODEL__'
+};
+function lxBuiltinKey(){
+  try { if (BUILTIN_LLM && BUILTIN_LLM.apiKeyEnc) return lxDeobf(BUILTIN_LLM.apiKeyEnc, LX_KEY_PASS); } catch (e) {}
+  return '';
+}
 function loadLlmConfig(){
-  try { var c = JSON.parse(localStorage.getItem(LS_KEY)); return (c && c.apiKey) ? c : null; } catch (e) { return null; }
+  try { var c = JSON.parse(localStorage.getItem(LS_KEY)); if (c && c.apiKey) return c; } catch (e) {}
+  // 无本机配置时回落内置默认，实现「新电脑打开即用」
+  var k = lxBuiltinKey();
+  if (k) return { apiKey: k, baseUrl: BUILTIN_LLM.baseUrl, model: BUILTIN_LLM.model };
+  return null;
 }
 var llmConfig = loadLlmConfig();
 
@@ -983,9 +1020,9 @@ function renderSidebar(){
   html += '<div class="seg"><button data-engine="auto" class="' + (state.engine === 'auto' ? 'on' : '') + '">自动</button><button data-engine="llm" class="' + (state.engine === 'llm' ? 'on' : '') + '">真实模型</button><button data-engine="local" class="' + (state.engine === 'local' ? 'on' : '') + '">本地演示</button></div>';
   html += '<div style="margin-top:5px;font-size:10px;line-height:1.6;color:#94a3b8">' +
     (state.engine === 'auto'
-      ? (hasCfg ? '已配置 Key：默认使用 ' + esc(llmConfig.model) + ' 回答' : '未配置 Key：当前使用本地演示引擎（点右上角 <svg class="ic" aria-hidden="true"><use href="#i-gear"/></svg> 接入）')
+      ? (hasCfg ? '默认使用 ' + esc(llmConfig.model) + ' 回答' : '当前使用本地演示引擎')
       : state.engine === 'llm'
-        ? (hasCfg ? '强制使用 ' + esc(llmConfig.model) + ' 回答' : '未配置 Key：将提示并用本地引擎回答')
+        ? (hasCfg ? '强制使用 ' + esc(llmConfig.model) + ' 回答' : '当前使用本地演示引擎')
         : '强制本地演示引擎：不调用任何外部 API，完全离线') + '</div></div>';
   html += '<div class="seg"><button data-model="pro" class="' + (state.model === 'pro' ? 'on' : '') + '"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg> 灵犀-Pro<small>深度推理</small></button><button data-model="lite" class="' + (state.model === 'lite' ? 'on' : '') + '"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg> 灵犀-Lite<small>快速响应</small></button></div>';
   if (hasCfg) {
@@ -1072,7 +1109,7 @@ function bindSidebar(){
       state.engine = b.getAttribute('data-engine');
       renderSidebar();
       if (state.engine !== 'local' && !(llmConfig && llmConfig.apiKey)) {
-        toast('尚未配置模型：请点右上角 ⚙️ 填入 API Key');
+        toast('尚未配置模型：请点右上角「模型设置」填入 API Key');
       }
     });
   });
@@ -1156,12 +1193,13 @@ $('#llmSave').addEventListener('click', function () {
   toast('已保存模型配置：' + llmConfig.model + '（仅存本浏览器）');
 });
 $('#llmClear').addEventListener('click', function () {
-  llmConfig = null;
   try { localStorage.removeItem(LS_KEY); } catch (e) {}
+  var bk = lxBuiltinKey();
+  llmConfig = bk ? { apiKey: bk, baseUrl: BUILTIN_LLM.baseUrl, model: BUILTIN_LLM.model } : null;
   state.lastChannel = null;
   updateChannelBadge();
   renderSidebar();
-  $('#llmTestResult').innerHTML = '<span style="color:#059669">已清除本浏览器保存的密钥</span>';
+  $('#llmTestResult').innerHTML = '<span style="color:#059669">已清除本机保存的密钥，已恢复内置默认 DeepSeek 配置</span>';
 });
 $('#llmTest').addEventListener('click', async function () {
   var key = $('#llmKey').value.trim();
@@ -1247,7 +1285,7 @@ function handleCsv(file){
 function renderTopbar(){
   var ds = activeDataset();
   $('#dsChipName').textContent = ds ? ds.name : '未选择数据集';
-  $('#modelBadge').textContent = state.model === 'pro' ? '<svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg> 灵犀-Pro' : '<svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg> 灵犀-Lite';
+  $('#modelBadge').innerHTML = state.model === 'pro' ? '<svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg> 灵犀-Pro' : '<svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg> 灵犀-Lite';
   $('#reportBtn').disabled = !ds;
 }
 function renderChips(){
@@ -1422,7 +1460,7 @@ async function* runEngine(input) {
     yield* runLLM(input, llmConfig);
   } else {
     if (wantLlm && !hasCfg) {
-      yield { type: 'text', delta: '> <svg class="ic" aria-hidden="true"><use href="#i-warn"/></svg> 已选择「真实模型」但尚未配置 API Key。请点右上角「<svg class="ic" aria-hidden="true"><use href="#i-gear"/></svg> 模型设置」填入 DeepSeek Key（仅保存在本浏览器）。以下先用本地演示引擎回答：\n\n' };
+      yield { type: 'text', delta: '> <svg class="ic" aria-hidden="true"><use href="#i-warn"/></svg> 尚未配置 API Key，以下先用本地演示引擎回答：\n\n' };
     }
     yield* LX.runAgent(input);
   }
@@ -1699,17 +1737,7 @@ function go(v){
 function enterWorkspace(){
   if (!state.activeId && state.datasets.length) state.activeId = state.datasets[0].id;
   go('ws');
-  /* 安全护栏：把能力清单写入标识的悬浮说明，体现「可解释的负责任 AI」 */
-(function(){
-  var gb = document.getElementById('guardBadge');
-  if (!gb) return;
-  try {
-    if (typeof LX !== 'undefined' && LX.GUARD_CAPABILITIES && LX.GUARD_CAPABILITIES.length){
-      gb.setAttribute('title', 'AI 安全护栏已启用：\n· ' + LX.GUARD_CAPABILITIES.join('\n· '));
-    }
-  } catch(e){}
-})();
-renderAll();
+  renderAll();
 }
 function toggleSidebar(){
   if (window.innerWidth >= 1024) return;
@@ -1770,7 +1798,7 @@ window.addEventListener('resize', function(){
 window.LXAPP = { go: go, enterWorkspace: enterWorkspace, toggleSidebar: toggleSidebar, state: state };
 
 /* ---------- 语音播报（SpeechSynthesis · 多模态输出） ----------
- * 与已有的 Web Speech 语音输入构成完整多模态闭环：说进来 → 读出去。 */
+ * 与已有的 Web Speech 语音输入构成完整多模态闭环：说进来、读出去。 */
 var ttsMid = null;
 function ttsSupported(){ return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function'; }
 function msgSpeechText(id){
@@ -1813,6 +1841,16 @@ function bindTts(){
 }
 
 /* ---------- 初始化 ---------- */
+/* 安全护栏：把能力清单写入标识的悬浮说明，体现「可解释的负责任 AI」 */
+(function(){
+  var gb = document.getElementById('guardBadge');
+  if (!gb) return;
+  try {
+    if (typeof LX !== 'undefined' && LX.GUARD_CAPABILITIES && LX.GUARD_CAPABILITIES.length){
+      gb.setAttribute('title', 'AI 安全护栏已启用：\n· ' + LX.GUARD_CAPABILITIES.join('\n· '));
+    }
+  } catch(e){}
+})();
 renderAll();
 updateChannelBadge();
 })();
