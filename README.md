@@ -362,7 +362,7 @@ TF-IDF 加权 → 余弦相似度 Top-K → 抽取最相关句子作为引用 �
 | 参赛赛事 | 2026 第九届传智杯全国大学生数智创新与 AI 应用大赛 |
 | 参赛赛道 | AI WEB 网页开发挑战赛（全国高校 AI Web 开发挑战赛）· **A 组** |
 | 参赛院校 | 三江美术学院 |
-| 团队名称 | 灵犀洞察队 |
+| 团队名称 | 三江美院-TL |
 | 代码仓库 | GitHub / Gitee 双平台 Public 仓库 |
 | 在线演示 | https://lingxi-insight.app.workbuddy.host/?sharecode=EWXS56ETEE（评审期间保持可用） |
 
