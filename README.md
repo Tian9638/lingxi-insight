@@ -364,7 +364,6 @@ TF-IDF 加权 → 余弦相似度 Top-K → 抽取最相关句子作为引用 �
 | 参赛院校 | 三江美术学院 |
 | 团队名称 | 三江美院-TL |
 | 代码仓库 | GitHub / Gitee 双平台 Public 仓库 |
-| 在线演示 | https://lingxi-insight.app.workbuddy.host/?sharecode=EWXS56ETEE（评审期间保持可用） |
 
 | 角色 | 姓名 | 分工 |
 | --- | --- | --- |
