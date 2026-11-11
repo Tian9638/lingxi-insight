@@ -66,10 +66,9 @@ AI Agent 自动完成「意图理解 → 数据查询聚合 → 智能图表推�
 
 ### 目录结构
 
->nestjs 后端支持框架  基于nodejs技术 router 路由
-> React 纯前端框架（写页面） 
-> TypeScript 强类型语法格式 
-> Tailwind Css 样式框架
+> 技术栈速览：**Next.js 14 App Router**（前后端一体，同时承载页面与 `app/api/*` 路由处理）、
+> **React 18**（视图层）、**TypeScript**（strict 强类型）、**Tailwind CSS**（原子化样式）、
+> **Zustand**（状态管理）。图表引擎与 AI 引擎均为自研，详见「二、技术架构」。
 ```
 lingxi-insight/
 ├── app/
@@ -413,6 +412,78 @@ TF-IDF 加权 → 余弦相似度 Top-K → 抽取最相关句子作为引用 �
 
 
 
-## 七、开源许可
+## 七、开源许可与合规说明
 
-MIT License（如竞赛规则有特殊要求，请以组委会章程为准）。
+### 7.1 本项目许可范围
+
+本项目源代码采用 **MIT License**（完整条款见仓库根目录 `LICENSE`）。允许使用、复制、修改、
+合并、发行、再授权及商业使用，唯一条件是保留版权声明与许可声明；软件按「现状」提供，不含任何担保。
+若竞赛规则对作品权属或开源范围另有规定，以组委会章程为准。
+
+| 范围 | 说明 |
+| --- | --- |
+| 源代码 `app/` · `components/` · `lib/` · `scripts/` | MIT |
+| README 与技术文档（`docs/`） | MIT，引用请注明出处 |
+| 内置合成数据集 | 固定种子确定性生成，不含真实个人信息，可自由使用 |
+| 赛事 / 院校 / 团队名称、站点图标 | 身份标识，不属于代码许可范围 |
+| 演示视频 | 竞赛提交材料，不纳入代码库分发 |
+| 第三方模型服务（DeepSeek / OpenAI 等） | 独立商业服务，其条款、费用与用量限制与本许可无关 |
+
+### 7.2 第三方依赖许可清单（可核验）
+
+本项目遵循**最小化依赖**原则：直接生产依赖仅 8 个，全部为宽松许可。
+依据仓库 `package-lock.json` 对完整依赖树 **149 个包**的扫描结果：
+MIT 128 · ISC 10 · Apache-2.0 6 · BSD-3-Clause 1 · 0BSD 1 · CC-BY-4.0 1 · 未标注 2，
+**未发现 GPL / AGPL / LGPL / SSPL / MPL 等强著佐权（copyleft）组件**，与 MIT 主许可兼容。
+
+| 组件 | 版本 | 许可证 | 用途 |
+| --- | --- | --- | --- |
+| next | 14.2.15 | MIT | App Router 框架 / SSE 接口 |
+| react · react-dom | 18.3.1 | MIT | 视图层 |
+| zustand | 4.5.5 | MIT | 流式事件状态管理 |
+| lucide-react | 0.446.0 | ISC | 图标系统 |
+| papaparse | 5.4.1 | MIT | CSV 解析 |
+| clsx · tailwind-merge | 2.1.1 / 2.5.3 | MIT | 条件样式 |
+| typescript | 5.6.2 | Apache-2.0 | 类型系统（开发期） |
+| tailwindcss · postcss · autoprefixer | 3.4.13 / 8.4.47 / 10.4.20 | MIT | 样式工具链（开发期） |
+| esbuild | 0.23.1 | MIT | 单文件版打包（开发期） |
+| @types/* | 20.16.11 等 | MIT | 类型声明（开发期） |
+
+完整第三方声明见 `THIRD_PARTY_NOTICES.md`；依赖树由 `package-lock.json` 锁定，`npm ci` 可精确复现。
+
+### 7.3 自主实现边界（技术归属声明）
+
+以下核心模块为**本项目自主实现**，不依赖任何图表库、向量数据库或 LLM 编排框架：
+
+| 模块 | 位置 | 实现要点 |
+| --- | --- | --- |
+| 纯 SVG 图表引擎 | `components/workspace/Charts.tsx` | 5 类图表、nice-scale 刻度、预测虚线、异常点标注、入场动画、原生 tooltip |
+| ReAct 编排与事件协议 | `lib/ai/engine.ts` · `lib/types.ts` | 规划 → 工具调用 → 观察 → 生成；统一 `AgentEvent` SSE 协议 |
+| 中文意图理解 | `lib/ai/nlp.ts` | 指标/维度同义词、时间范围、聚合方式、Top N、维度值模糊匹配 |
+| 查询聚合与统计 | `lib/ai/dataops.ts` | 过滤/分组/聚合/排序；Z-Score、最小二乘外推、Pearson 相关 |
+| RAG 检索 | `lib/ai/rag.ts` | 滑动窗口切片、中文二元组分词、TF-IDF、余弦相似度、阈值回退 |
+| 安全护栏 | `lib/ai/guard.ts` | 输入拦截、输出 PII 脱敏、通道降级、预测免责 |
+| 单文件构建管线 | `scripts/inject-standalone.js` | esbuild 打包 → 占位符注入 → 单 HTML 产物 |
+
+> SSE、Web Speech API、OpenAI Chat Completions / Function Calling 属公开协议或事实标准，
+> 本项目依规范自行实现，未引入厂商私有 SDK。
+
+### 7.4 开源可复现性与工程实践
+
+| 项目 | 说明 |
+| --- | --- |
+| 公开仓库 | GitHub `Tian9638/lingxi-insight` · Gitee `STL9638/lingxi-insight`（均 Public） |
+| 版本可追溯 | 完整提交历史，作者与分工对应可查 |
+| 依赖可复现 | `package-lock.json` + `npm ci`；固定版本，无浮动依赖 |
+| 质量基线 | `tsc --noEmit` strict 零错误；`next build` 通过；e2e 13 项断言全部通过 |
+| 结果可复现 | 内置数据集由固定种子生成，同一提问稳定产出同一数字 |
+| 密钥合规 | Key 仅经 `.env.local` / 环境变量注入；含密钥的构建产物 `standalone.html` 已排除入库 |
+
+### 7.5 致谢
+
+感谢 Next.js、React、TypeScript、Zustand、lucide-react、PapaParse、Tailwind CSS、esbuild
+等上游项目及其维护者；W3C Server-Sent Events 与 Web Speech API 规范；
+TF-IDF、Z-Score、Pearson 相关系数、最小二乘等公共领域经典算法；
+以及 OpenAI Chat Completions / Function Calling 这一被广泛实现的事实接口协议。
+感谢全国高等院校计算机基础教育研究会与赛事组委会提供交流平台。
+
